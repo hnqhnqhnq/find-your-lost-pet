@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -9,7 +10,7 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    await new Promise((resolve) => setTimeout(resolve, 500));
     console.log("First Name:", firstName);
     console.log("Last Name:", lastName);
     console.log("Email:", email);
@@ -98,6 +99,17 @@ const SignUpPage = () => {
             </button>
           </div>
         </form>
+        <div className='text-center text-sm text-gray-500 mt-8'>
+          <p>
+            Already have an account?{" "}
+            <Link
+              to='/login'
+              className='font-medium text-teal-600 hover:text-teal-500'
+            >
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

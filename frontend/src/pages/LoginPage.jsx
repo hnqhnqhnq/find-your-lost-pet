@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -7,7 +6,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    await new Promise((resolve) => setTimeout(resolve, 500));
     console.log("Email:", email);
     console.log("Password:", password);
   };
@@ -62,12 +61,12 @@ const LoginPage = () => {
         <div className='text-center text-sm text-gray-500 mt-8'>
           <p>
             Don’t have an account?{" "}
-            <Link
-              to='/signup'
+            <a
+              href='/signup'
               className='font-medium text-teal-600 hover:text-teal-500'
             >
               Sign up
-            </Link>
+            </a>
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const userRouter = require("./routes/userRoutes");
 
 // Initialize express app
 const app = express();
@@ -35,6 +36,7 @@ app.use(xss());
 //app.use(hpp({}))
 
 // Routes
+app.use("/api/v1/users", userRouter);
 
 // Global Error Handler
 
