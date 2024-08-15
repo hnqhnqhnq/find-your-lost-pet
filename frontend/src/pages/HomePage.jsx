@@ -1,11 +1,37 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
-import { FaDog } from "react-icons/fa";
-import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
+import {
+  FaDog,
+  FaFacebook,
+  FaInstagram,
+  FaGithub,
+  FaLinkedin,
+} from "react-icons/fa";
 
 const HomePage = () => {
   const [navOpen, setNavOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/users/signoutUser",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        navigate("/login");
+      } else {
+        console.error("Failed to sign out");
+      }
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-100 to-teal-100 flex flex-col'>
@@ -54,8 +80,11 @@ const HomePage = () => {
           <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-225'>
             <Link to='/profile'>Profile</Link>
           </li>
-          <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-375'>
-            <Link to='/login'>Sign Out</Link>
+          <li
+            className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-375 cursor-pointer'
+            onClick={handleSignOut}
+          >
+            Sign Out
           </li>
         </ul>
       </nav>
