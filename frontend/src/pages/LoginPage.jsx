@@ -1,14 +1,37 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/users/loginUser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        navigate("/home");
+      } else {
+        const data = await response.json();
+        setError(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An unexpected error occurred. Please try again later.");
+    }
   };
 
   return (

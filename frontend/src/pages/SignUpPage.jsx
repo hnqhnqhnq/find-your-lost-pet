@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,15 +7,38 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirmPassword);
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/users/signupUser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password,
+            passwordConfirm: confirmPassword,
+          }),
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        navigate("/home");
+      } else {
+        const data = await response.json();
+        console.error("Signup failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+    }
   };
 
   return (

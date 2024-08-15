@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const userSchema = mongoose.Schema({
   firstName: {
@@ -17,7 +18,7 @@ const userSchema = mongoose.Schema({
     required: [true, "Please provide an email address."],
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email address."],
-    unique: [true, "Please provide another email address."],
+    unique: true,
   },
   password: {
     type: String,
@@ -50,6 +51,26 @@ const userSchema = mongoose.Schema({
     default: "user",
   },
 });
+
+// Document middlewares
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+
+  next();
+});
+
+// Methods
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
