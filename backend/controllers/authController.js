@@ -5,6 +5,33 @@ const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return next(new AppError("No user", 404));
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+      loggedIn: true,
+    });
+  }
+
+  return res.status(404).json({
+    status: "fail",
+    loggedIn: false,
+  });
+});
+
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -32,6 +59,20 @@ const createSendToken = (user, statusCode, res) => {
     },
   });
 };
+
+exports.signout = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    res.cookie("jwt", "", {
+      expires: new Date(0),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
+
+  res
+    .status(200)
+    .json({ status: "success", message: "Logged out successfully!" });
+});
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({

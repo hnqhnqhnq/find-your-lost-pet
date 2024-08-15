@@ -6,12 +6,16 @@ const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/userRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
 
 // Initialize express app
 const app = express();
+
+// Cookie Parser
+app.use(cookieParser());
 
 // Logger
 if (process.env.NODE_ENV === "development") {
