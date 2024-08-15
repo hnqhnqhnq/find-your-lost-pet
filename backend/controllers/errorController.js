@@ -2,7 +2,7 @@ const AppError = require("./../utils/appError");
 
 const sendErrorDev = (err, res) => {
   if (err.isOperational) {
-    res.status(statusCode).json({
+    res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
