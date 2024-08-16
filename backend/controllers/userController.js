@@ -1,39 +1,33 @@
+const { promisify } = require("util");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 
-exports.getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-
-    res.status(200).json({
-      status: "success",
-      result: users.length,
-      data: users,
-    });
-  } catch (err) {
-    console.log(err.message);
-
-    res.status(404).json({
-      status: "fail",
-      message: err.message,
-    });
+exports.getProfileData = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
   }
-};
 
-exports.createUser = async (req, res) => {
+  let decoded;
   try {
-    const newUser = await User.create(req.body);
-
-    res.status(201).json({
-      status: "success",
-      data: newUser,
-    });
+    decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET
+    );
   } catch (err) {
-    console.log(err.message);
-
-    res.status(404).json({
-      status: "fail",
-      message: err.message,
-    });
+    return next(new AppError("Invalid or expired token", 401));
   }
-};
+
+  const user = await User.findById(decoded.id);
+  if (!user) {
+    return next(
+      new AppError("The user belonging to this token no longer exists", 404)
+    );
+  }
+
+  return res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+});

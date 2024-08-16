@@ -5,16 +5,21 @@ import {
   Routes,
   Navigate,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import HomePage from "./pages/HomePage";
+import ExpiredTokenModal from "./components/ExpiredTokenModal";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isManualSignOut, setIsManualSignOut] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -27,13 +32,24 @@ const App = () => {
           }
         );
 
-        const data = await response.json();
+        if (response.status === 401) {
+          if (
+            !isManualSignOut &&
+            location.pathname !== "/login" &&
+            location.pathname !== "/signup"
+          ) {
+            setShowModal(true);
+            setIsAuthenticated(false);
+            navigate("/login");
+          }
+        } else if (response.ok) {
+          const data = await response.json();
 
-        if (data.status === "success" && data.loggedIn) {
-          setIsAuthenticated(true);
-          navigate("/home");
-        } else {
-          setIsAuthenticated(false);
+          if (data.status === "success" && data.loggedIn) {
+            setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
+          }
         }
       } catch (error) {
         console.error("Error checking login status:", error);
@@ -44,35 +60,63 @@ const App = () => {
     };
 
     checkLoginStatus();
-  }, [navigate]);
+
+    const intervalId = setInterval(checkLoginStatus, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [location.pathname, navigate, isManualSignOut]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setIsManualSignOut(false);
+  };
+
+  const handleSignOut = async () => {
+    setIsManualSignOut(true);
+    await fetch("http://localhost:3000/api/v1/users/signoutUser", {
+      method: "GET",
+      credentials: "include",
+    });
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <Routes>
-      <Route
-        path='/'
-        element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
-      />
-      <Route
-        path='/login'
-        element={isAuthenticated ? <Navigate to='/home' /> : <LoginPage />}
-      />
-      <Route
-        path='/signup'
-        element={isAuthenticated ? <Navigate to='/home' /> : <SignUpPage />}
-      />
-      <Route
-        path='/home'
-        element={isAuthenticated ? <HomePage /> : <Navigate to='/login' />}
-      />
-      <Route
-        path='*'
-        element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
-      />
-    </Routes>
+    <>
+      {showModal && <ExpiredTokenModal onClose={handleCloseModal} />}
+      <Routes>
+        <Route
+          path='/'
+          element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
+        />
+        <Route
+          path='/login'
+          element={isAuthenticated ? <Navigate to='/home' /> : <LoginPage />}
+        />
+        <Route
+          path='/signup'
+          element={isAuthenticated ? <Navigate to='/home' /> : <SignUpPage />}
+        />
+        <Route
+          path='/home'
+          element={
+            isAuthenticated ? (
+              <HomePage onSignOut={handleSignOut} />
+            ) : (
+              <Navigate to='/login' />
+            )
+          }
+        />
+        <Route
+          path='*'
+          element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
+        />
+      </Routes>
+    </>
   );
 };
 
