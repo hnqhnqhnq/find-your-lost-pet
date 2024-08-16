@@ -22,10 +22,11 @@ const LoginPage = () => {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         navigate("/home");
       } else {
-        const data = await response.json();
         setError(data.message || "Something went wrong");
       }
     } catch (error) {
@@ -40,6 +41,7 @@ const LoginPage = () => {
         <h2 className='text-4xl font-extrabold text-center text-gray-800 mb-8'>
           Welcome Back
         </h2>
+        {error && <div className='text-red-600 text-center mb-4'>{error}</div>}
         <form className='space-y-6' onSubmit={handleSubmit}>
           <div>
             <label className='block text-sm font-medium text-gray-600 mb-2'>

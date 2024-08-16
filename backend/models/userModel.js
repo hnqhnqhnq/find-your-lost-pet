@@ -18,7 +18,7 @@ const userSchema = mongoose.Schema({
     required: [true, "Please provide an email address."],
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email address."],
-    unique: true,
+    unique: [true],
   },
   password: {
     type: String,
@@ -50,6 +50,10 @@ const userSchema = mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+  createdAt: {
+    type: Date,
+    select: false,
+  },
 });
 
 // Document middlewares
@@ -61,6 +65,15 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
 
+  next();
+});
+
+userSchema.pre("save", function (next) {
+  if (!this.isNew) {
+    next();
+  }
+
+  this.createdAt = new Date();
   next();
 });
 

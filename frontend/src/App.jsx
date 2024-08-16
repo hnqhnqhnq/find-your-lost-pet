@@ -14,7 +14,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // This ensures useNavigate is used inside a Router context
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +23,7 @@ const App = () => {
           "http://localhost:3000/api/v1/users/isLoggedIn",
           {
             method: "GET",
-            credentials: "include", // Include cookies in the request
+            credentials: "include",
           }
         );
 
@@ -32,7 +31,7 @@ const App = () => {
 
         if (data.status === "success" && data.loggedIn) {
           setIsAuthenticated(true);
-          navigate("/home"); // Redirect to home if logged in
+          navigate("/home");
         } else {
           setIsAuthenticated(false);
         }

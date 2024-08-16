@@ -7,6 +7,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -30,14 +31,15 @@ const SignUpPage = () => {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         navigate("/home");
       } else {
-        const data = await response.json();
-        console.error("Signup failed:", data.message);
+        setError(data.message || "Something went wrong. Please try again.");
       }
     } catch (error) {
-      console.error("Error during signup:", error);
+      setError("An unexpected error occurred. Please try again later.");
     }
   };
 
@@ -47,6 +49,7 @@ const SignUpPage = () => {
         <h2 className='text-4xl font-extrabold text-center text-gray-800 mb-8'>
           Sign Up
         </h2>
+        {error && <div className='text-red-600 text-center mb-4'>{error}</div>}
         <form className='space-y-6' onSubmit={handleSubmit}>
           <div>
             <label className='block text-sm font-medium text-gray-600 mb-2'>
