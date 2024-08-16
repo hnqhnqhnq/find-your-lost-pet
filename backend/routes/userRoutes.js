@@ -11,4 +11,6 @@ router.route("/signoutUser").get(authController.signout);
 
 router.route("/myProfile").get(userController.getProfileData);
 
+router.route("/").get(userController.getAllUsers);
+
 module.exports = router;

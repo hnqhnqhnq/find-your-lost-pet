@@ -10,6 +10,7 @@ import {
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 import ExpiredTokenModal from "./components/ExpiredTokenModal";
 
 const App = () => {
@@ -61,7 +62,7 @@ const App = () => {
 
     checkLoginStatus();
 
-    const intervalId = setInterval(checkLoginStatus, 10000);
+    const intervalId = setInterval(checkLoginStatus, 300000);
 
     return () => clearInterval(intervalId);
   }, [location.pathname, navigate, isManualSignOut]);
@@ -110,6 +111,10 @@ const App = () => {
               <Navigate to='/login' />
             )
           }
+        />
+        <Route
+          path='/profile'
+          element={isAuthenticated ? <ProfilePage /> : <Navigate to='/login' />}
         />
         <Route
           path='*'
