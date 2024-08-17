@@ -126,12 +126,20 @@ const ProfilePage = () => {
               <strong>Email:</strong> {userProfile.email}
             </p>
             <button
-              className='mt-4 px-6 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
+              className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
               onClick={() =>
                 alert("Change Password functionality not implemented yet")
               }
             >
               Change Your Password
+            </button>
+            <button
+              className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
+              onClick={() =>
+                alert("Change Password functionality not implemented yet")
+              }
+            >
+              Upload Profile Picture
             </button>
           </div>
         ) : (

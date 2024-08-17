@@ -22,6 +22,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     return next(new AppError("User no longer exists", 404));
   }
 
+  res.setHeader("Cache-Control", "no-store");
   return res.status(200).json({
     status: "success",
     data: {
@@ -52,6 +53,7 @@ const createSendToken = (user, statusCode, res) => {
 
   user.password = undefined;
 
+  res.setHeader("Cache-Control", "no-store");
   res.status(statusCode).json({
     status: "success",
     data: {
@@ -66,9 +68,11 @@ exports.signout = catchAsync(async (req, res, next) => {
       expires: new Date(0),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     });
   }
 
+  res.setHeader("Cache-Control", "no-store");
   res
     .status(200)
     .json({ status: "success", message: "Logged out successfully!" });

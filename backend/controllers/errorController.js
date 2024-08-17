@@ -1,7 +1,7 @@
 const AppError = require("./../utils/appError");
 
 const handleCastErrorDB = (err) => {
-  const message = `Invalid ${err.path}: ${err.value}`;
+  const message = `Invalid ${err.path}: ${err.value}\n`;
   return new AppError(message, 400);
 };
 
@@ -16,13 +16,30 @@ const handleDuplicateFieldsDB = (err) => {
 
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
+  let message = "";
+  let ok = false;
 
-  const message = `Invalid input data. ${errors.join(". ")}`;
+  for (const errorMsg of errors) {
+    if (
+      !errorMsg.includes("password") &&
+      !errorMsg.includes("passwordConfirm")
+    ) {
+      message += errorMsg + "<br>";
+    } else if (ok === false) {
+      message += "Password must be longer than 8 characters<br>";
+      ok = true;
+    }
+  }
+
   return new AppError(message, 400);
 };
 
 const handleJWTExpiredError = () => {
   return new AppError("Your token has expired. Please log in again!", 401);
+};
+
+const handleJWTError = () => {
+  return new AppError("Invalid token. Please log in again!", 401);
 };
 
 const sendErrorDev = (err, res) => {
@@ -78,6 +95,10 @@ module.exports = (err, req, res, next) => {
 
     if (error.name === "TokenExpiredError") {
       error = handleJWTExpiredError(error);
+    }
+
+    if (error.name === "JsonWebTokenError") {
+      error = handleJWTError();
     }
 
     sendErrorProduction(error, res);
