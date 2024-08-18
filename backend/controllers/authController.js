@@ -107,3 +107,36 @@ exports.login = catchAsync(async (req, res, next) => {
 
   createSendToken(user, 200, res);
 });
+
+exports.changeUserPassword = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(
+      new AppError("Your token has expired. Please log in again!", 401)
+    );
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const user = await User.findById(decoded.id).select("+password");
+  if (!user) {
+    return next(new AppError("User no longer exists", 404));
+  }
+
+  if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
+    return next(new AppError("Old password is incorrect", 401));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.confirmPassword;
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+});

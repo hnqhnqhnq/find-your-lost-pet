@@ -34,7 +34,6 @@ const userSchema = mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, "Please confirm the password.\n"],
-    minlength: 8,
     validate: {
       validator: function (el) {
         return el === this.password;
@@ -42,6 +41,7 @@ const userSchema = mongoose.Schema({
       message: "Passwords are not the same.\n",
     },
   },
+
   country: {
     type: String,
     enum: [...countries],

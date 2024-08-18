@@ -38,3 +38,30 @@ exports.getProfileData = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.changeUserInfo = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const user = await User.findByIdAndUpdate(decoded.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+});

@@ -14,6 +14,15 @@ const AppError = require("./utils/appError");
 // Initialize express app
 const app = express();
 
+// CORS configuration
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
+
 // Cookie Parser
 app.use(cookieParser());
 
@@ -41,15 +50,6 @@ app.use(xss());
 
 // Parameter pollution
 //app.use(hpp({}))
-
-// CORS configuration
-app.use(
-  cors({
-    origin: "http://localhost:3001",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
 
 // Routes
 app.use("/api/v1/users", userRouter);
