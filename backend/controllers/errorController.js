@@ -18,20 +18,30 @@ const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
   let message = "";
   let ok = false;
+  let passwordMismatch = false;
 
   for (const errorMsg of errors) {
+    if (errorMsg.includes("Passwords are not the same")) {
+      passwordMismatch = true;
+      continue;
+    }
+
     if (
       !errorMsg.includes("password") &&
       !errorMsg.includes("passwordConfirm")
     ) {
-      message += errorMsg + "<br>";
-    } else if (ok === false) {
-      message += "Password must be longer than 8 characters<br>";
+      message += errorMsg + " ";
+    } else if (ok === false && !passwordMismatch) {
+      message += "Password must be longer than 8 characters ";
       ok = true;
     }
   }
 
-  return new AppError(message, 400);
+  if (passwordMismatch) {
+    message += "Passwords do not match. ";
+  }
+
+  return new AppError(message.trim(), 400);
 };
 
 const handleJWTExpiredError = () => {

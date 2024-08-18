@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     if (isAuthenticated) {
       const intervalId = setInterval(() => {
         checkLoginStatus();
-      }, 5000);
+      }, 1000 * 60 * 60 * 24);
 
       return () => clearInterval(intervalId);
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
-import { FaDog, FaUserCircle } from "react-icons/fa"; // Import the user icon
+import { FaDog, FaUserCircle } from "react-icons/fa";
 
 const ProfilePage = () => {
   const [navOpen, setNavOpen] = useState(false);
@@ -94,7 +94,7 @@ const ProfilePage = () => {
             <Link to='/home'>Home</Link>
           </li>
           <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-75'>
-            <Link to='/find'>Find Lost Pets</Link>
+            <Link to='/find'>Posts</Link>
           </li>
           <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-150'>
             <Link to='/create'>Create a Post</Link>
@@ -115,7 +115,6 @@ const ProfilePage = () => {
         {userProfile ? (
           <div className='bg-white p-8 rounded-lg shadow-lg text-center w-full lg:w-5/12 min-h-[200px]'>
             <FaUserCircle size={128} className='mx-auto mb-4 text-teal-500' />
-            <h2 className='text-3xl font-bold text-gray-800 mb-4'>Profile</h2>
             <p className='text-lg text-gray-600 mb-4'>
               <strong>First Name:</strong> {userProfile.firstName}
             </p>
@@ -125,19 +124,27 @@ const ProfilePage = () => {
             <p className='text-lg text-gray-600 mb-4'>
               <strong>Email:</strong> {userProfile.email}
             </p>
+            <p className='text-lg text-gray-600 mb-4'>
+              <strong>Country:</strong> {userProfile.country}
+            </p>
+            <p className='text-lg text-gray-600 mb-4'>
+              <strong>City:</strong> {userProfile.city}
+            </p>
             <button
               className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
-              onClick={() =>
-                alert("Change Password functionality not implemented yet")
-              }
+              onClick={() => navigate("/profile/changedata")}
+            >
+              Change User Data
+            </button>
+            <button
+              className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
+              onClick={() => navigate("/profile/changepassword")}
             >
               Change Your Password
             </button>
             <button
               className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
-              onClick={() =>
-                alert("Change Password functionality not implemented yet")
-              }
+              onClick={() => navigate("/profile/uploadpicture")}
             >
               Upload Profile Picture
             </button>

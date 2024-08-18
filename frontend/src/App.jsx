@@ -1,37 +1,100 @@
-// src/App.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  useNavigate,
+  useLocation,
 } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
+import ChangeData from "./pages/ChangeDataPage";
+import ChangePassword from "./pages/ChangePasswordPage";
 import ExpiredTokenModal from "./components/ExpiredTokenModal";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 
-const AppRoutes = () => {
-  const { isAuthenticated, isCheckingStatus, logout } = useAuth();
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isManualSignOut, setIsManualSignOut] = useState(false);
 
-  if (isCheckingStatus) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/v1/users/isLoggedIn",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (response.status === 401) {
+          if (
+            !isManualSignOut &&
+            location.pathname !== "/login" &&
+            location.pathname !== "/signup"
+          ) {
+            setShowModal(true);
+            setIsAuthenticated(false);
+            navigate("/login");
+          }
+        } else if (response.ok) {
+          const data = await response.json();
+
+          if (data.status === "success" && data.loggedIn) {
+            setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking login status:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkLoginStatus();
+
+    const intervalId = setInterval(checkLoginStatus, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [location.pathname, navigate, isManualSignOut]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setIsManualSignOut(false);
+  };
+
+  const handleSignOut = async () => {
+    setIsManualSignOut(true);
+    await fetch("http://localhost:3000/api/v1/users/signoutUser", {
+      method: "GET",
+      credentials: "include",
+    });
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
+      {showModal && <ExpiredTokenModal onClose={handleCloseModal} />}
       <Routes>
         <Route
           path='/'
-          element={
-            isAuthenticated ? (
-              <Navigate to='/home' />
-            ) : (
-              <Navigate to='/login' replace />
-            )
-          }
+          element={<Navigate to={isAuthenticated ? "/home" : "/login"} />}
         />
         <Route
           path='/login'
@@ -45,7 +108,7 @@ const AppRoutes = () => {
           path='/home'
           element={
             isAuthenticated ? (
-              <HomePage onSignOut={logout} />
+              <HomePage onSignOut={handleSignOut} />
             ) : (
               <Navigate to='/login' />
             )
@@ -54,6 +117,16 @@ const AppRoutes = () => {
         <Route
           path='/profile'
           element={isAuthenticated ? <ProfilePage /> : <Navigate to='/login' />}
+        />
+        <Route
+          path='/profile/changedata'
+          element={isAuthenticated ? <ChangeData /> : <Navigate to='/login' />}
+        />
+        <Route
+          path='/profile/changepassword'
+          element={
+            isAuthenticated ? <ChangePassword /> : <Navigate to='/login' />
+          }
         />
         <Route
           path='*'
@@ -67,9 +140,7 @@ const AppRoutes = () => {
 export default function WrappedApp() {
   return (
     <Router>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <App />
     </Router>
   );
 }

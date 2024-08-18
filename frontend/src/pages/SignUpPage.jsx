@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import citiesAndCountries from "./../data/cities-and-countries.json";
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,6 +8,8 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -26,6 +29,8 @@ const SignUpPage = () => {
             email,
             password,
             passwordConfirm: confirmPassword,
+            country,
+            city,
           }),
           credentials: "include",
         }
@@ -42,6 +47,12 @@ const SignUpPage = () => {
       setError("An unexpected error occurred. Please try again later.");
     }
   };
+
+  const countries = citiesAndCountries.map((item) => item.country);
+
+  const cities = country
+    ? citiesAndCountries.find((item) => item.country === country)?.cities || []
+    : [];
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-teal-100 p-4'>
@@ -116,6 +127,44 @@ const SignUpPage = () => {
               required
             />
           </div>
+          <div>
+            <label className='block text-sm font-medium text-gray-600 mb-2'>
+              Country
+            </label>
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className='w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-shadow placeholder-gray-400 shadow-sm'
+              required
+            >
+              <option value=''>Select your country</option>
+              {countries.map((countryName, index) => (
+                <option key={index} value={countryName}>
+                  {countryName}
+                </option>
+              ))}
+            </select>
+          </div>
+          {country && (
+            <div>
+              <label className='block text-sm font-medium text-gray-600 mb-2'>
+                City
+              </label>
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className='w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-shadow placeholder-gray-400 shadow-sm'
+                required
+              >
+                <option value=''>Select your city</option>
+                {cities.map((cityName, index) => (
+                  <option key={index} value={cityName}>
+                    {cityName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <button
               type='submit'

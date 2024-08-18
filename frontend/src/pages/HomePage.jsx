@@ -72,7 +72,7 @@ const HomePage = () => {
             <Link to='/home'>Home</Link>
           </li>
           <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-75'>
-            <Link to='/find'>Find Lost Pets</Link>
+            <Link to='/find'>Posts</Link>
           </li>
           <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-150'>
             <Link to='/create'>Create a Post</Link>

@@ -1,6 +1,11 @@
+const fs = require("fs");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const {
+  countries,
+  citiesOfCountries,
+} = require("./../utils/countriesAndCitiesParsing");
 
 const userSchema = mongoose.Schema({
   firstName: {
@@ -36,6 +41,15 @@ const userSchema = mongoose.Schema({
       },
       message: "Passwords are not the same.\n",
     },
+  },
+  country: {
+    type: String,
+    enum: [...countries],
+    required: [true, "You must choose your country"],
+  },
+  city: {
+    type: String,
+    required: [true, "You must choose your city"],
   },
   photo: {
     type: String,
