@@ -11,7 +11,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/loginUser",
+        "http://localhost:5000/api/v1/users/loginUser",
         {
           method: "POST",
           headers: {

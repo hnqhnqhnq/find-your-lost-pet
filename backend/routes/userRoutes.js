@@ -1,6 +1,7 @@
 const express = require("express");
 const userController = require("./../controllers/userController");
 const authController = require("./../controllers/authController");
+const upload = require("./../utils/multerConfig");
 
 const router = express.Router();
 
@@ -12,6 +13,9 @@ router.route("/changePassword").patch(authController.changeUserPassword);
 
 router.route("/myProfile").get(userController.getProfileData);
 router.route("/changeUserData").patch(userController.changeUserInfo);
+router
+  .route("/updateProfilePicture")
+  .post(upload.single("profilePic"), userController.updateProfilePhoto);
 
 router.route("/").get(userController.getAllUsers);
 

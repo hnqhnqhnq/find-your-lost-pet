@@ -18,7 +18,7 @@ const ChangePassword = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/changePassword",
+        "http://localhost:5000/api/v1/users/changePassword",
         {
           method: "PATCH",
           headers: {
@@ -38,7 +38,7 @@ const ChangePassword = () => {
       if (response.ok) {
         setSuccess("Password changed successfully.");
 
-        await fetch("http://localhost:3000/api/v1/users/signoutUser", {
+        await fetch("http://localhost:5000/api/v1/users/signoutUser", {
           method: "GET",
           credentials: "include",
         });

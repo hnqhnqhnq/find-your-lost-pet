@@ -1,4 +1,5 @@
 const { promisify } = require("util");
+const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
@@ -62,6 +63,40 @@ exports.changeUserInfo = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       user,
+    },
+  });
+});
+
+exports.updateProfilePhoto = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  if (!req.file) {
+    return next(new AppError("Please upload a file", 400));
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    decoded.id,
+    { photo: `/uploads/profile_pictures/${req.file.filename}` },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedUser) {
+    return next(
+      new AppError("The user belonging to this token no longer exists", 404)
+    );
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: updatedUser,
     },
   });
 });

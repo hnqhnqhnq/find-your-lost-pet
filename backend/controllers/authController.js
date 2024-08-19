@@ -125,6 +125,14 @@ exports.changeUserPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("User no longer exists", 404));
   }
 
+  if (
+    !req.body.oldPassword ||
+    !req.body.password ||
+    !req.body.confirmPassword
+  ) {
+    return next(new AppError("Submit the necessary data", 401));
+  }
+
   if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
     return next(new AppError("Old password is incorrect", 401));
   }

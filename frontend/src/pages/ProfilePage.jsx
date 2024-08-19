@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaDog, FaUserCircle } from "react-icons/fa";
+import "../styles/styles.css";
 
 const ProfilePage = () => {
   const [navOpen, setNavOpen] = useState(false);
@@ -12,7 +13,7 @@ const ProfilePage = () => {
     const fetchProfileData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/v1/users/myProfile",
+          "http://localhost:5000/api/v1/users/myProfile",
           {
             method: "GET",
             credentials: "include",
@@ -38,7 +39,7 @@ const ProfilePage = () => {
   const handleSignOut = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/users/signoutUser",
+        "http://localhost:5000/api/v1/users/signoutUser",
         {
           method: "GET",
           credentials: "include",
@@ -53,6 +54,39 @@ const ProfilePage = () => {
     } catch (error) {
       console.error("Error during sign out:", error);
     }
+  };
+
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("profilePic", selectedFile);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/v1/users/updateProfilePicture",
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        setUserProfile(data.data.user);
+        alert("Profile picture updated successfully!");
+      } else {
+        console.error("Failed to update profile picture:", data.message);
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+    }
+  };
+
+  const handleUploadClick = () => {
+    document.getElementById("fileInput").click();
   };
 
   return (
@@ -114,11 +148,28 @@ const ProfilePage = () => {
       <div className='flex-grow flex flex-col items-center justify-center mt-12 px-4 lg:px-12 gap-8'>
         {userProfile ? (
           <div className='bg-white p-8 rounded-lg shadow-lg text-center w-full lg:w-5/12 min-h-[200px]'>
-            <FaUserCircle size={128} className='mx-auto mb-4 text-teal-500' />
-            <p className='text-lg text-gray-600 mb-4'>
+            {userProfile.photo ? (
+              <img
+                src={`http://localhost:5000${userProfile.photo}`}
+                alt='Profile'
+                className='mx-auto mb-4 rounded-full'
+                style={{ width: "128px", height: "128px", objectFit: "cover" }}
+              />
+            ) : (
+              <FaUserCircle size={128} className='mx-auto mb-4 text-teal-500' />
+            )}
+            <p
+              className={`text-lg text-gray-600 mb-4 ${
+                userProfile.role === "admin" ? "rainbow-text" : ""
+              }`}
+            >
               <strong>First Name:</strong> {userProfile.firstName}
             </p>
-            <p className='text-lg text-gray-600 mb-4'>
+            <p
+              className={`text-lg text-gray-600 mb-4 ${
+                userProfile.role === "admin" ? "rainbow-text" : ""
+              }`}
+            >
               <strong>Last Name:</strong> {userProfile.lastName}
             </p>
             <p className='text-lg text-gray-600 mb-4'>
@@ -130,6 +181,18 @@ const ProfilePage = () => {
             <p className='text-lg text-gray-600 mb-4'>
               <strong>City:</strong> {userProfile.city}
             </p>
+            <input
+              type='file'
+              id='fileInput'
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <button
+              className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
+              onClick={handleUploadClick}
+            >
+              Upload Profile Picture
+            </button>
             <button
               className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
               onClick={() => navigate("/profile/changedata")}
@@ -141,12 +204,6 @@ const ProfilePage = () => {
               onClick={() => navigate("/profile/changepassword")}
             >
               Change Your Password
-            </button>
-            <button
-              className='mt-4 px-6 py-2 mx-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
-              onClick={() => navigate("/profile/uploadpicture")}
-            >
-              Upload Profile Picture
             </button>
           </div>
         ) : (

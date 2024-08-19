@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -14,10 +15,13 @@ const AppError = require("./utils/appError");
 // Initialize express app
 const app = express();
 
+// Serve static files from data/uploads
+app.use("/uploads", express.static(path.join(__dirname, "data/uploads")));
+
 // CORS configuration
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
   })
@@ -33,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Limiter
 const limiter = rateLimit({
-  max: 100,
+  max: 500,
   windowMs: 60 * 60 * 1000,
   message: "Too many requests from this ip, please try again in an hour!",
 });

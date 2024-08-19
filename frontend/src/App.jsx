@@ -14,6 +14,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ChangeData from "./pages/ChangeDataPage";
 import ChangePassword from "./pages/ChangePasswordPage";
 import ExpiredTokenModal from "./components/ExpiredTokenModal";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +29,7 @@ const App = () => {
     const checkLoginStatus = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/v1/users/isLoggedIn",
+          "http://localhost:5000/api/v1/users/isLoggedIn",
           {
             method: "GET",
             credentials: "include",
@@ -64,7 +65,7 @@ const App = () => {
 
     checkLoginStatus();
 
-    const intervalId = setInterval(checkLoginStatus, 10000);
+    const intervalId = setInterval(checkLoginStatus, 1000 * 60 * 60 * 24);
 
     return () => clearInterval(intervalId);
   }, [location.pathname, navigate, isManualSignOut]);
@@ -76,7 +77,7 @@ const App = () => {
 
   const handleSignOut = async () => {
     setIsManualSignOut(true);
-    await fetch("http://localhost:3000/api/v1/users/signoutUser", {
+    await fetch("http://localhost:5000/api/v1/users/signoutUser", {
       method: "GET",
       credentials: "include",
     });
@@ -85,7 +86,18 @@ const App = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <ClipLoader color='#09f' loading={isLoading} size={50} />
+      </div>
+    );
   }
 
   return (
