@@ -100,3 +100,31 @@ exports.updateProfilePhoto = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.searchUser = catchAsync(async (req, res, next) => {
+  const searchTerm = req.query.q;
+  const regex = new RegExp(searchTerm, "i");
+
+  const users = await User.find({
+    $or: [{ firstName: regex }, { lastName: regex }],
+  });
+
+  res.status(200).json({
+    status: "success",
+    results: users.length,
+    data: { users },
+  });
+});
+
+exports.getUserByID = catchAsync(async (req, res, next) => {
+  const currentUser = await User.findById(req.params.id);
+
+  if (!currentUser) {
+    return next(new AppError("Can't find this user!", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: { currentUser },
+  });
+});

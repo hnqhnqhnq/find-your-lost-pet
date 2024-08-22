@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
+import UserProfilePage from "./pages/UserProfilePage";
 import ChangeData from "./pages/ChangeDataPage";
 import ChangePassword from "./pages/ChangePasswordPage";
 import ExpiredTokenModal from "./components/ExpiredTokenModal";
@@ -138,6 +139,12 @@ const App = () => {
           path='/profile/changepassword'
           element={
             isAuthenticated ? <ChangePassword /> : <Navigate to='/login' />
+          }
+        />
+        <Route
+          path='/profile/:id'
+          element={
+            isAuthenticated ? <UserProfilePage /> : <Navigate to='/login' />
           }
         />
         <Route

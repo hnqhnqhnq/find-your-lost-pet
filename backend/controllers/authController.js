@@ -73,9 +73,10 @@ exports.signout = catchAsync(async (req, res, next) => {
   }
 
   res.setHeader("Cache-Control", "no-store");
-  res
-    .status(200)
-    .json({ status: "success", message: "Logged out successfully!" });
+  res.status(200).json({
+    status: "success",
+    message: "Logged out successfully!",
+  });
 });
 
 exports.signup = catchAsync(async (req, res, next) => {

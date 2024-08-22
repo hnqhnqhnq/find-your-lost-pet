@@ -17,6 +17,9 @@ router
   .route("/updateProfilePicture")
   .post(upload.single("profilePic"), userController.updateProfilePhoto);
 
+router.route("/search").get(userController.searchUser);
+
 router.route("/").get(userController.getAllUsers);
+router.route("/:id").get(userController.getUserByID);
 
 module.exports = router;
