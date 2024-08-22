@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import Navbar from "../components/Navbar";
+import "../styles/styles.css";
 
 const UserProfilePage = () => {
   const { id } = useParams();
@@ -59,10 +60,18 @@ const UserProfilePage = () => {
             ) : (
               <FaUserCircle size={128} className='mx-auto mb-4 text-teal-500' />
             )}
-            <p className='text-lg text-gray-600 mb-4'>
+            <p
+              className={`text-lg text-gray-600 mb-4 ${
+                userProfile.role === "admin" ? "rainbow-text" : ""
+              }`}
+            >
               <strong>First Name:</strong> {userProfile.firstName}
             </p>
-            <p className='text-lg text-gray-600 mb-4'>
+            <p
+              className={`text-lg text-gray-600 mb-4 ${
+                userProfile.role === "admin" ? "rainbow-text" : ""
+              }`}
+            >
               <strong>Last Name:</strong> {userProfile.lastName}
             </p>
             <p className='text-lg text-gray-600 mb-4'>
