@@ -68,6 +68,10 @@ const userSchema = mongoose.Schema({
     type: Date,
     select: false,
   },
+  passwordChangedAt: {
+    type: Date,
+    select: false,
+  },
 });
 
 // Document middlewares
@@ -89,6 +93,15 @@ userSchema.pre("save", function (next) {
 
   this.createdAt = new Date();
   next();
+});
+
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password") && !this.isNew) {
+    this.passwordChangedAt = new Date();
+    next();
+  } else {
+    next();
+  }
 });
 
 // Methods
