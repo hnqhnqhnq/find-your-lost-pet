@@ -16,6 +16,8 @@ import ChangeData from "./pages/ChangeDataPage";
 import ChangePassword from "./pages/ChangePasswordPage";
 import ExpiredTokenModal from "./components/ExpiredTokenModal";
 import ClipLoader from "react-spinners/ClipLoader";
+import PostsPage from "./pages/PostsPage";
+import CreatePostPage from "./pages/CreatePostPage";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +147,16 @@ const App = () => {
           path='/profile/:id'
           element={
             isAuthenticated ? <UserProfilePage /> : <Navigate to='/login' />
+          }
+        />
+        <Route
+          path='/posts'
+          element={isAuthenticated ? <PostsPage /> : <Navigate to='/login' />}
+        />
+        <Route
+          path='/createPost'
+          element={
+            isAuthenticated ? <CreatePostPage /> : <Navigate to='/login' />
           }
         />
         <Route
