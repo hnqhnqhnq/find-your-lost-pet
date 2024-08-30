@@ -8,10 +8,9 @@ const upload = require("./../utils/multerConfigPosts");
 exports.uploadPostPhotos = upload.array("photos", 5);
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = await Post.find().populate(
-    "createdBy",
-    "firstName lastName photo"
-  );
+  const posts = await Post.find()
+    .populate("createdBy", "firstName lastName photo")
+    .sort({ postedAt: -1 });
 
   if (!posts) {
     return next(new AppError("Could not find any posts", 404));
@@ -43,6 +42,8 @@ exports.createPost = catchAsync(async (req, res, next) => {
   const post = await Post.create({
     title: req.body.title,
     content: req.body.content,
+    country: req.body.country,
+    city: req.body.city,
     createdBy: decoded.id,
     photos: photos,
   });
@@ -55,6 +56,71 @@ exports.createPost = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       post,
+    },
+  });
+});
+
+exports.createComment = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const { postId } = req.params;
+  const { content } = req.body;
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    return next(new AppError("Post not found", 404));
+  }
+
+  const newComment = {
+    content,
+    commentedBy: decoded.id,
+  };
+
+  post.comments.push(newComment);
+  await post.save();
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      comment: newComment,
+    },
+  });
+});
+
+exports.getCommentsForAPost = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const { postId } = req.params;
+
+  const post = await Post.findById(postId).populate(
+    "comments.commentedBy",
+    "firstName lastName photo"
+  );
+
+  if (!post) {
+    return next(new AppError("Post not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      count: post.comments.length,
+      comments: post.comments,
     },
   });
 });

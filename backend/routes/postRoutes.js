@@ -8,4 +8,9 @@ router
   .get(postController.getAllPosts)
   .post(postController.uploadPostPhotos, postController.createPost);
 
+router
+  .route("/:postId/comments")
+  .post(postController.createComment)
+  .get(postController.getCommentsForAPost);
+
 module.exports = router;

@@ -1,4 +1,9 @@
 const mongoose = require("mongoose");
+const commentSchema = require("./commentModel");
+const {
+  countries,
+  citiesOfCountries,
+} = require("./../utils/countriesAndCitiesParsing");
 
 const postSchema = mongoose.Schema({
   title: {
@@ -8,6 +13,15 @@ const postSchema = mongoose.Schema({
   content: {
     type: String,
     required: [true, "Please provide content for the post"],
+  },
+  country: {
+    type: String,
+    enum: [...countries],
+    required: [true, "You must choose your country"],
+  },
+  city: {
+    type: String,
+    required: [true, "You must choose your city"],
   },
   photos: {
     type: [String],
@@ -19,6 +33,9 @@ const postSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  comments: {
+    type: [commentSchema],
   },
 });
 

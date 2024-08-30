@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import Navbar from "../components/Navbar";
+import citiesAndCountries from "./../data/cities-and-countries.json"; // Assuming the file path
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [photos, setPhotos] = useState([]);
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -33,6 +36,8 @@ const CreatePostPage = () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
+    formData.append("country", country);
+    formData.append("city", city);
     photos.forEach((photo) => {
       formData.append("photos", photo);
     });
@@ -55,6 +60,12 @@ const CreatePostPage = () => {
       setLoading(false);
     }
   };
+
+  const countries = citiesAndCountries.map((item) => item.country);
+
+  const cities = country
+    ? citiesAndCountries.find((item) => item.country === country)?.cities || []
+    : [];
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-100 to-teal-100 flex flex-col'>
@@ -98,6 +109,50 @@ const CreatePostPage = () => {
                 required
               ></textarea>
             </div>
+            <div className='mb-4'>
+              <label
+                htmlFor='country'
+                className='block text-gray-700 font-bold mb-2'
+              >
+                Country
+              </label>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className='w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-shadow placeholder-gray-400 shadow-sm'
+                required
+              >
+                <option value=''>Select your country</option>
+                {countries.map((countryName, index) => (
+                  <option key={index} value={countryName}>
+                    {countryName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {country && (
+              <div className='mb-4'>
+                <label
+                  htmlFor='city'
+                  className='block text-gray-700 font-bold mb-2'
+                >
+                  City
+                </label>
+                <select
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className='w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 transition-shadow placeholder-gray-400 shadow-sm'
+                  required
+                >
+                  <option value=''>Select your city</option>
+                  {cities.map((cityName, index) => (
+                    <option key={index} value={cityName}>
+                      {cityName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             {photos.length > 0 && (
               <div className='mb-4'>
                 {photos.map((photo, index) => (
