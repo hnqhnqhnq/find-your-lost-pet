@@ -117,22 +117,22 @@ const Navbar = () => {
         }`}
         style={{ zIndex: 1000 }}
       >
-        <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300'>
+        <li className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300'>
           <Link to='/home'>Home</Link>
         </li>
-        <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-75'>
+        <li className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-75'>
           <Link to='/posts'>Posts</Link>
         </li>
-        <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-225'>
+        <li className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-225'>
           <Link to='/profile'>Profile</Link>
         </li>
         <li
-          className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-375 cursor-pointer'
+          className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-375 cursor-pointer'
           onClick={handleSignOut}
         >
           Sign Out
         </li>
-        <li className='block lg:inline-block py-2 lg:py-0 px-4 lg:px-2'>
+        <li className='block lg:inline-block py-2 my-1 lg:py-0 px-4 lg:px-2'>
           <form onSubmit={handleSearch} className='flex items-center'>
             <input
               type='text'
