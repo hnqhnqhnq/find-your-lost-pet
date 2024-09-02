@@ -8,7 +8,16 @@ const upload = require("./../utils/multerConfigPosts");
 exports.uploadPostPhotos = upload.array("photos", 5);
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = await Post.find()
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const posts = await Post.find({ active: true })
     .populate("createdBy", "firstName lastName photo")
     .sort({ postedAt: -1 });
 
@@ -22,6 +31,33 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
     data: {
       posts,
     },
+  });
+});
+
+exports.deletePost = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const postId = req.params.postId;
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    return next(new AppError("Not found!", 404));
+  }
+
+  post.active = false;
+  await post.save();
+
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });
 
@@ -121,6 +157,44 @@ exports.getCommentsForAPost = catchAsync(async (req, res, next) => {
     data: {
       count: post.comments.length,
       comments: post.comments,
+    },
+  });
+});
+
+exports.getPostsOfUser = catchAsync(async (req, res, next) => {
+  if (!req.cookies || !req.cookies.jwt) {
+    return next(new AppError("User is not logged in", 401));
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    req.cookies.jwt,
+    process.env.JWT_SECRET
+  );
+
+  const { userId } = req.params;
+
+  const posts = await Post.find({ createdBy: userId, active: true })
+    .populate([
+      {
+        path: "createdBy",
+        select: "firstName lastName photo",
+      },
+      {
+        path: "comments.commentedBy",
+        select: "firstName lastName photo",
+      },
+    ])
+    .sort({ postedAt: -1 });
+
+  if (!posts || posts.length === 0) {
+    return next(new AppError("No posts available!", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    length: posts.length,
+    data: {
+      posts,
     },
   });
 });

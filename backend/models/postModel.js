@@ -37,15 +37,17 @@ const postSchema = mongoose.Schema({
   comments: {
     type: [commentSchema],
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // Document middleware
 postSchema.pre("save", function (next) {
-  if (!this.isNew) {
-    next();
+  if (this.isNew) {
+    this.postedAt = new Date();
   }
-
-  this.postedAt = new Date();
   next();
 });
 

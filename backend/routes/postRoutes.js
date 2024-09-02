@@ -13,4 +13,8 @@ router
   .post(postController.createComment)
   .get(postController.getCommentsForAPost);
 
+router.route("/:userId/posts").get(postController.getPostsOfUser);
+
+router.route("/:postId").delete(postController.deletePost);
+
 module.exports = router;
