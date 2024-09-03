@@ -53,8 +53,8 @@ exports.getMessages = catchAsync(async (req, res, next) => {
   }
 
   const messages = await Message.find({ chat: chatId })
-    .populate("sender", "firstName lastName photo")
-    .populate("receiver", "firstName lastName photo")
+    .populate("sender", "firstName lastName photo _id")
+    .populate("receiver", "firstName lastName photo _id")
     .sort({ messageAt: 1 });
 
   res.status(200).json({

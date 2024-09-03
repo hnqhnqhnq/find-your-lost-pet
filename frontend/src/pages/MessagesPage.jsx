@@ -84,18 +84,41 @@ const MessagesPage = () => {
 
     if (!newMessage.trim()) return;
 
+    // Determine the receiver ID
     const receiverId =
       selectedChat.firstParticipant._id === currentUser._id
         ? selectedChat.secondParticipant._id
         : selectedChat.firstParticipant._id;
 
+    // Construct the message object with all necessary fields
     const messageToSend = {
       chat: selectedChat._id,
-      sender: currentUser._id,
+      sender: {
+        _id: currentUser._id,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        photo: currentUser.photo,
+      },
+      receiver: {
+        _id: receiverId,
+        firstName:
+          selectedChat.firstParticipant._id === currentUser._id
+            ? selectedChat.secondParticipant.firstName
+            : selectedChat.firstParticipant.firstName,
+        lastName:
+          selectedChat.firstParticipant._id === currentUser._id
+            ? selectedChat.secondParticipant.lastName
+            : selectedChat.firstParticipant.lastName,
+        photo:
+          selectedChat.firstParticipant._id === currentUser._id
+            ? selectedChat.secondParticipant.photo
+            : selectedChat.firstParticipant.photo,
+      },
       content: newMessage,
       messageAt: new Date().toISOString(),
     };
 
+    // Optimistically update the UI with the complete message data
     setMessages((prevMessages) => [...prevMessages, messageToSend]);
     setNewMessage("");
     scrollToBottom();
@@ -111,7 +134,8 @@ const MessagesPage = () => {
           },
           body: JSON.stringify({
             content: messageToSend.content,
-            sender: messageToSend.sender,
+            sender: currentUser._id,
+            receiver: receiverId,
           }),
         }
       );
@@ -154,6 +178,23 @@ const MessagesPage = () => {
       <FaUserCircle className='w-8 h-8 text-gray-400' />
     );
   };
+
+  useEffect(() => {
+    if (selectedChat) {
+      console.log("Selected Chat:", selectedChat);
+      console.log("Current User ID:", currentUser?._id);
+    }
+  }, [selectedChat, currentUser]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      messages.forEach((message) => {
+        const isSender = String(message.sender) === String(currentUser?._id);
+        console.log("Message:", message);
+        console.log("Is Sender:", isSender);
+      });
+    }
+  }, [messages, currentUser]);
   return (
     <div className='min-h-screen flex flex-col'>
       <Navbar />
@@ -203,11 +244,15 @@ const MessagesPage = () => {
             <>
               <div className='flex-grow overflow-y-auto p-4 h-0'>
                 {messages.map((message, index) => {
-                  const isSender = message.sender === currentUser._id;
+                  const isSender =
+                    String(message.sender._id) === String(currentUser._id);
+
                   const otherUser =
                     selectedChat.firstParticipant._id === currentUser._id
                       ? selectedChat.secondParticipant
                       : selectedChat.firstParticipant;
+
+                  const displayUser = isSender ? currentUser : otherUser;
 
                   return (
                     <div
@@ -217,29 +262,45 @@ const MessagesPage = () => {
                       } mb-4`}
                     >
                       {!isSender && (
-                        <div className='mr-2'>
-                          {renderProfilePicture(otherUser)}
-                        </div>
+                        <>
+                          <div className='mr-2'>
+                            {renderProfilePicture(displayUser)}
+                          </div>
+                          <div>
+                            <p className='text-sm'>
+                              <strong>
+                                {displayUser.firstName} {displayUser.lastName}
+                              </strong>
+                            </p>
+                            <div className='p-3 rounded-lg max-w-xs bg-gray-300 text-gray-800'>
+                              <p>{message.content}</p>
+                              <p className='text-xs mt-1 text-right'>
+                                {new Date(message.messageAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        </>
                       )}
-                      <div
-                        className={`p-3 rounded-lg max-w-xs ${
-                          isSender
-                            ? "bg-teal-500 text-white"
-                            : "bg-gray-300 text-gray-800"
-                        }`}
-                      >
-                        <p className='text-sm'>
-                          <strong>
-                            {isSender
-                              ? `${currentUser.firstName} ${currentUser.lastName}`
-                              : `${otherUser.firstName} ${otherUser.lastName}`}
-                          </strong>
-                        </p>
-                        <p>{message.content}</p>
-                        <p className='text-xs mt-1 text-right'>
-                          {new Date(message.messageAt).toLocaleString()}
-                        </p>
-                      </div>
+                      {isSender && (
+                        <>
+                          <div>
+                            <p className='text-sm text-right'>
+                              <strong>
+                                {displayUser.firstName} {displayUser.lastName}
+                              </strong>
+                            </p>
+                            <div className='p-3 rounded-lg max-w-xs bg-teal-500 text-white text-left'>
+                              <p>{message.content}</p>
+                              <p className='text-xs mt-1 text-right'>
+                                {new Date(message.messageAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className='ml-2'>
+                            {renderProfilePicture(displayUser)}
+                          </div>
+                        </>
+                      )}
                     </div>
                   );
                 })}

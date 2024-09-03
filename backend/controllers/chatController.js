@@ -71,6 +71,7 @@ exports.getChats = catchAsync(async (req, res, next) => {
     { path: "firstParticipant", select: "firstName lastName photo" },
     { path: "secondParticipant", select: "firstName lastName photo" },
   ]);
+
   if (chats.length === 0) {
     return next(new AppError("No chats found", 404));
   }
