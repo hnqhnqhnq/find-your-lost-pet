@@ -178,6 +178,28 @@ const UserProfilePage = () => {
       navigate(`/profile/${userId}`);
     }
   };
+
+  const handleMessageClick = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/v1/chats/${currentUser._id}/${userProfile._id}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        navigate("/messages");
+      } else if (response.status === 400) {
+        navigate("/messages");
+      } else {
+        throw new Error("Failed to create or find chat.");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-100 to-teal-100 flex flex-col'>
       <Navbar />
@@ -217,7 +239,10 @@ const UserProfilePage = () => {
             <p className='text-lg text-gray-600 mb-4'>
               <strong>City:</strong> {userProfile.city}
             </p>
-            <button className='mt-4 px-6 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'>
+            <button
+              onClick={handleMessageClick}
+              className='mt-4 px-6 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1'
+            >
               Message this User
             </button>
           </div>

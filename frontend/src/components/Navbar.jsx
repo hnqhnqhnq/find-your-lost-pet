@@ -126,6 +126,9 @@ const Navbar = () => {
         <li className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-225'>
           <Link to='/profile'>Profile</Link>
         </li>
+        <li className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-225'>
+          <Link to='/messages'>Messages</Link>
+        </li>
         <li
           className='block lg:inline-block py-2 my-2 lg:py-0 px-4 lg:px-2 text-gray-700 hover:text-teal-500 transition duration-300 delay-375 cursor-pointer'
           onClick={handleSignOut}
