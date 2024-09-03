@@ -84,13 +84,11 @@ const MessagesPage = () => {
 
     if (!newMessage.trim()) return;
 
-    // Determine the receiver ID
     const receiverId =
       selectedChat.firstParticipant._id === currentUser._id
         ? selectedChat.secondParticipant._id
         : selectedChat.firstParticipant._id;
 
-    // Construct the message object with all necessary fields
     const messageToSend = {
       chat: selectedChat._id,
       sender: {
@@ -118,7 +116,6 @@ const MessagesPage = () => {
       messageAt: new Date().toISOString(),
     };
 
-    // Optimistically update the UI with the complete message data
     setMessages((prevMessages) => [...prevMessages, messageToSend]);
     setNewMessage("");
     scrollToBottom();

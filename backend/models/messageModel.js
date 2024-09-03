@@ -26,8 +26,14 @@ const messageSchema = mongoose.Schema({
   },
   messageAt: {
     type: Date,
-    default: Date.now(),
   },
+});
+
+messageSchema.pre("save", function (next) {
+  if (this.isNew) {
+    this.messageAt = new Date();
+  }
+  next();
 });
 
 messageSchema.pre("save", async function (next) {
