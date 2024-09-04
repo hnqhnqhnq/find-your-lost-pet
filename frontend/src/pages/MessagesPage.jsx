@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { FaUserCircle, FaPaperclip } from "react-icons/fa";
+import { FaUserCircle, FaPaperclip, FaTimes } from "react-icons/fa";
 
 const MessagesPage = () => {
   const [chats, setChats] = useState([]);
@@ -9,6 +9,7 @@ const MessagesPage = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
@@ -82,43 +83,18 @@ const MessagesPage = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() && selectedFiles.length === 0) return;
 
     const receiverId =
       selectedChat.firstParticipant._id === currentUser._id
         ? selectedChat.secondParticipant._id
         : selectedChat.firstParticipant._id;
 
-    const messageToSend = {
-      chat: selectedChat._id,
-      sender: {
-        _id: currentUser._id,
-        firstName: currentUser.firstName,
-        lastName: currentUser.lastName,
-        photo: currentUser.photo,
-      },
-      receiver: {
-        _id: receiverId,
-        firstName:
-          selectedChat.firstParticipant._id === currentUser._id
-            ? selectedChat.secondParticipant.firstName
-            : selectedChat.firstParticipant.firstName,
-        lastName:
-          selectedChat.firstParticipant._id === currentUser._id
-            ? selectedChat.secondParticipant.lastName
-            : selectedChat.firstParticipant.lastName,
-        photo:
-          selectedChat.firstParticipant._id === currentUser._id
-            ? selectedChat.secondParticipant.photo
-            : selectedChat.firstParticipant.photo,
-      },
-      content: newMessage,
-      messageAt: new Date().toISOString(),
-    };
-
-    setMessages((prevMessages) => [...prevMessages, messageToSend]);
-    setNewMessage("");
-    scrollToBottom();
+    const formData = new FormData();
+    formData.append("content", newMessage);
+    selectedFiles.forEach((file) => {
+      formData.append("mediaFiles", file);
+    });
 
     try {
       const response = await fetch(
@@ -126,14 +102,7 @@ const MessagesPage = () => {
         {
           method: "POST",
           credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            content: messageToSend.content,
-            sender: currentUser._id,
-            receiver: receiverId,
-          }),
+          body: formData,
         }
       );
 
@@ -155,9 +124,21 @@ const MessagesPage = () => {
 
       const updatedMessagesData = await updatedMessagesResponse.json();
       setMessages(updatedMessagesData.data.messages);
+      setNewMessage("");
+      setSelectedFiles([]);
+      scrollToBottom();
     } catch (err) {
       console.error(err.message);
     }
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFiles([...selectedFiles, ...e.target.files]);
+  };
+
+  const removeSelectedFile = (index) => {
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
   };
 
   const scrollToBottom = () => {
@@ -271,6 +252,44 @@ const MessagesPage = () => {
                             </p>
                             <div className='p-3 rounded-lg max-w-xs bg-gray-300 text-gray-800'>
                               <p>{message.content}</p>
+                              {message.mediaFiles &&
+                                message.mediaFiles.map((file, idx) => (
+                                  <div key={idx} className='mt-2'>
+                                    {file.endsWith(".png") ||
+                                    file.endsWith(".jpg") ||
+                                    file.endsWith(".jpeg") ||
+                                    file.endsWith(".gif") ? (
+                                      <img
+                                        src={`http://localhost:5000${file}`}
+                                        alt='media'
+                                        className='max-w-full h-auto rounded-lg'
+                                      />
+                                    ) : file.endsWith(".mp4") ||
+                                      file.endsWith(".mov") ||
+                                      file.endsWith(".avi") ? (
+                                      <video
+                                        controls
+                                        className='max-w-full h-auto rounded-lg'
+                                      >
+                                        <source
+                                          src={`http://localhost:5000${file}`}
+                                          type='video/mp4'
+                                        />
+                                        Your browser does not support the video
+                                        tag.
+                                      </video>
+                                    ) : (
+                                      <a
+                                        href={`http://localhost:5000${file}`}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                        className='text-blue-600 underline'
+                                      >
+                                        View File
+                                      </a>
+                                    )}
+                                  </div>
+                                ))}
                               <p className='text-xs mt-1 text-right'>
                                 {new Date(message.messageAt).toLocaleString()}
                               </p>
@@ -288,6 +307,44 @@ const MessagesPage = () => {
                             </p>
                             <div className='p-3 rounded-lg max-w-xs bg-teal-500 text-white text-left'>
                               <p>{message.content}</p>
+                              {message.mediaFiles &&
+                                message.mediaFiles.map((file, idx) => (
+                                  <div key={idx} className='mt-2'>
+                                    {file.endsWith(".png") ||
+                                    file.endsWith(".jpg") ||
+                                    file.endsWith(".jpeg") ||
+                                    file.endsWith(".gif") ? (
+                                      <img
+                                        src={`http://localhost:5000${file}`}
+                                        alt='media'
+                                        className='max-w-full h-auto rounded-lg'
+                                      />
+                                    ) : file.endsWith(".mp4") ||
+                                      file.endsWith(".mov") ||
+                                      file.endsWith(".avi") ? (
+                                      <video
+                                        controls
+                                        className='max-w-full h-auto rounded-lg'
+                                      >
+                                        <source
+                                          src={`http://localhost:5000${file}`}
+                                          type='video/mp4'
+                                        />
+                                        Your browser does not support the video
+                                        tag.
+                                      </video>
+                                    ) : (
+                                      <a
+                                        href={`http://localhost:5000${file}`}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                        className='text-white underline'
+                                      >
+                                        View File
+                                      </a>
+                                    )}
+                                  </div>
+                                ))}
                               <p className='text-xs mt-1 text-right'>
                                 {new Date(message.messageAt).toLocaleString()}
                               </p>
@@ -307,35 +364,63 @@ const MessagesPage = () => {
 
               <form
                 onSubmit={handleSendMessage}
-                className='flex items-center p-4 border-t'
+                className='flex flex-col p-4 border-t'
               >
-                <FaPaperclip className='text-gray-500 mr-4 cursor-pointer' />
-                <input
-                  type='text'
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder='Type a message...'
-                  className='flex-grow p-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500'
-                />
-                <button
-                  type='submit'
-                  className='ml-4 bg-teal-500 text-white p-2 rounded-full'
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    stroke='currentColor'
-                    className='w-6 h-6'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M5 10l7-7m0 0l7 7m-7-7v18'
+                <div className='flex space-x-2 mb-4'>
+                  {Array.from(selectedFiles).map((file, index) => (
+                    <div key={index} className='relative'>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt='preview'
+                        className='w-20 h-20 rounded-lg object-cover'
+                      />
+                      <button
+                        type='button'
+                        onClick={() => removeSelectedFile(index)}
+                        className='absolute top-0 right-0 text-red-500'
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className='flex items-center'>
+                  <label className='mr-4 cursor-pointer'>
+                    <FaPaperclip className='text-gray-500' />
+                    <input
+                      type='file'
+                      multiple
+                      onChange={handleFileChange}
+                      className='hidden'
                     />
-                  </svg>
-                </button>
+                  </label>
+                  <input
+                    type='text'
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder='Type a message...'
+                    className='flex-grow p-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500'
+                  />
+                  <button
+                    type='submit'
+                    className='ml-4 bg-teal-500 text-white p-2 rounded-full'
+                  >
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                      className='w-6 h-6'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth='2'
+                        d='M5 10l7-7m0 0l7 7m-7-7v18'
+                      />
+                    </svg>
+                  </button>
+                </div>
               </form>
             </>
           ) : (

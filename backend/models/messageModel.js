@@ -19,7 +19,7 @@ const messageSchema = mongoose.Schema({
   },
   content: {
     type: String,
-    required: [true, "Message content is required"],
+    required: false,
   },
   mediaFiles: {
     type: [String],

@@ -6,6 +6,11 @@ const Message = require("./../models/messageModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 
+exports.uploadMediaFiles = require("../utils/multerConfigMediaFiles").array(
+  "mediaFiles",
+  10
+);
+
 exports.createMessage = catchAsync(async (req, res, next) => {
   if (!req.cookies || !req.cookies.jwt) {
     return next(new AppError("You are not logged in!", 401));
@@ -17,13 +22,18 @@ exports.createMessage = catchAsync(async (req, res, next) => {
   );
 
   const { receiverId, chatId } = req.params;
-  const content = req.body.content;
+  const content = req.body.content || "";
+
+  const mediaFiles = req.files
+    ? req.files.map((file) => `/uploads/mediaFiles/${file.filename}`)
+    : [];
 
   const message = await Message.create({
     chat: chatId,
     sender: decoded.id,
     receiver: receiverId,
-    content: content || "",
+    content,
+    mediaFiles,
   });
 
   res.status(201).json({
