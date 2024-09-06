@@ -19,6 +19,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import PostsPage from "./pages/PostsPage";
 import MessagesPage from "./pages/MessagesPage";
 import CreatePostPage from "./pages/CreatePostPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage"; // Import ResetPasswordPage
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +46,9 @@ const App = () => {
           if (
             !isManualSignOut &&
             location.pathname !== "/login" &&
-            location.pathname !== "/signup"
+            location.pathname !== "/signup" &&
+            location.pathname !== "/forgotPassword" &&
+            !location.pathname.startsWith("/resetPassword")
           ) {
             setShowModal(true);
             setIsAuthenticated(false);
@@ -106,7 +110,11 @@ const App = () => {
 
   return (
     <>
-      {showModal && <ExpiredTokenModal onClose={handleCloseModal} />}
+      {showModal &&
+        location.pathname !== "/forgotPassword" &&
+        !location.pathname.startsWith("/resetPassword") && (
+          <ExpiredTokenModal onClose={handleCloseModal} />
+        )}
       <Routes>
         <Route
           path='/'
@@ -164,6 +172,18 @@ const App = () => {
           path='/messages'
           element={
             isAuthenticated ? <MessagesPage /> : <Navigate to='/login' />
+          }
+        />
+        <Route
+          path='/forgotPassword'
+          element={
+            isAuthenticated ? <Navigate to='/home' /> : <ForgotPasswordPage />
+          }
+        />
+        <Route
+          path='/resetPassword/:token'
+          element={
+            isAuthenticated ? <Navigate to='/home' /> : <ResetPasswordPage />
           }
         />
         <Route

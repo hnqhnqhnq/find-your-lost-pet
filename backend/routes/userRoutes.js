@@ -10,6 +10,8 @@ router.route("/loginUser").post(authController.login);
 router.route("/isLoggedIn").get(authController.isLoggedIn);
 router.route("/signoutUser").get(authController.signout);
 router.route("/changePassword").patch(authController.changeUserPassword);
+router.route("/forgotPassword").post(authController.forgotPassword);
+router.route("/resetPassword/:token").patch(authController.resetPassword);
 
 router.route("/myProfile").get(userController.getProfileData);
 router.route("/changeUserData").patch(userController.changeUserInfo);
