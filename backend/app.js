@@ -24,7 +24,7 @@ app.use("/uploads", express.static(path.join(__dirname, "data/uploads")));
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "https://find-your-lost-pet.vercel.app"],
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true,
 };
