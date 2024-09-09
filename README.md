@@ -58,12 +58,18 @@ Before you begin, ensure you have met the following requirements:
 Base URL: **/api/v1**
 
 User Routes
-  - POST /signupUser: Register a new user.
-  - POST /loginUser: Log in an existing user.
-  - GET /isLoggedIn: Check if the user is logged in.
-  - PATCH /changePassword: Change the user password.
-  - POST /forgotPassword: Send a password reset email.
-  - PATCH /resetPassword/:token: Reset password using a token.
+  - POST /signupUser - Register a new user.
+  - POST /loginUser - Log in an existing user.
+  - GET /isLoggedIn - Check if the user is logged in.
+  - GET /signoutUser - Log out the user.
+  - PATCH /changePassword - Change the user's password.
+  - POST /forgotPassword - Send a password reset email.
+  - PATCH /resetPassword/:token - Reset password using a token.
+  - GET /myProfile - Get the profile data of the logged-in user.
+  - PATCH /changeUserData - Update the user's profile information.
+  - GET /search - Search for users.
+  - GET / - Get all users.
+  - GET /:id - Get user by ID.
         
 Post Routes
   - GET /posts: Retrieve all posts.
@@ -73,6 +79,10 @@ Post Routes
 Message Routes
   - POST /messages/:receiverId/:chatId: Send a message.
   - GET /messages/:chatId: Retrieve messages in a chat.
+
+Chat Routes
+  - POST /:user1/:user2 - Create a chat between two users.
+  - GET / - Retrieve all chats.
 
 ## 📜 Scripts
 
