@@ -55,7 +55,7 @@ Before you begin, ensure you have met the following requirements:
   ```
 ## 🔗 API Endpoints
 
-Base URL: /api/v1
+Base URL: **/api/v1**
 
 User Routes
   - POST /signupUser: Register a new user.
