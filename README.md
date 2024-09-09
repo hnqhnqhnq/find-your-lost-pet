@@ -24,3 +24,51 @@ Before you begin, ensure you have met the following requirements:
   ```
   git clone https://github.com/your-username/find-your-lost-pet.git
   ```
+- **Navigate to the backend folder**:
+  ```
+  cd find-your-lost-pet/backend
+  ```
+- **Install backend dependencies**:
+  ```
+  npm install
+  ```
+- **Set up environment variables: Create a config.env file with the following**:
+  ```
+  MONGO_URI=your_mongo_db_connection_string
+  PORT=5000
+  ```
+- **Start the backend server**:
+  ```
+  npm run start:dev
+  ```
+- **Navigate to the frontend folder**:
+  ```
+  cd ../frontend
+  ```
+- **Install frontend dependencies**:
+  ```
+  npm install
+  ```
+- **Start the frontend server**:
+  ```
+  npm start
+  ```
+## 🔗 API Endpoints
+Base URL: /api/v1
+
+    User Routes
+        POST /signupUser: Register a new user.
+        POST /loginUser: Log in an existing user.
+        GET /isLoggedIn: Check if the user is logged in.
+        PATCH /changePassword: Change the user password.
+        POST /forgotPassword: Send a password reset email.
+        PATCH /resetPassword/:token: Reset password using a token.
+
+    Post Routes
+        GET /posts: Retrieve all posts.
+        POST /posts: Create a new post.
+        DELETE /posts/:postId: Delete a post by ID.
+
+    Message Routes
+        POST /messages/:receiverId/:chatId: Send a message.
+        GET /messages/:chatId: Retrieve messages in a chat.
