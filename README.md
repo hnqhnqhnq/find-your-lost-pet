@@ -54,21 +54,56 @@ Before you begin, ensure you have met the following requirements:
   npm start
   ```
 ## 🔗 API Endpoints
+
 Base URL: /api/v1
 
-    User Routes
-        POST /signupUser: Register a new user.
-        POST /loginUser: Log in an existing user.
-        GET /isLoggedIn: Check if the user is logged in.
-        PATCH /changePassword: Change the user password.
-        POST /forgotPassword: Send a password reset email.
-        PATCH /resetPassword/:token: Reset password using a token.
+User Routes
+  POST /signupUser: Register a new user.
+  POST /loginUser: Log in an existing user.
+  GET /isLoggedIn: Check if the user is logged in.
+  PATCH /changePassword: Change the user password.
+  POST /forgotPassword: Send a password reset email.
+  PATCH /resetPassword/:token: Reset password using a token.
+        
+Post Routes
+  GET /posts: Retrieve all posts.
+  POST /posts: Create a new post.
+  DELETE /posts/:postId: Delete a post by ID.
 
-    Post Routes
-        GET /posts: Retrieve all posts.
-        POST /posts: Create a new post.
-        DELETE /posts/:postId: Delete a post by ID.
+Message Routes
+  POST /messages/:receiverId/:chatId: Send a message.
+  GET /messages/:chatId: Retrieve messages in a chat.
 
-    Message Routes
-        POST /messages/:receiverId/:chatId: Send a message.
-        GET /messages/:chatId: Retrieve messages in a chat.
+## 📜 Scripts
+
+- **Run backend in development**:
+  ```
+  npm run start:dev
+  ```
+- **Run backend in production**:
+  ```
+  npm run start:prod
+  ```
+- **Start the frontend**:
+  ```
+  npm start
+  ```
+
+## 🚀 Usage
+
+- **Start the backend server**:
+  ```
+  npm run start:dev
+  ```
+- **Start the frontend server**:
+  ```
+  npm start
+  ```
+- **Access the application**:
+
+    Frontend: http://localhost:3000
+    Backend API: http://localhost:5000
+
+## 📄 License
+
+This project is licensed under the MIT License.
