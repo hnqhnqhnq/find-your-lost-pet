@@ -17,3 +17,10 @@ Before you begin, ensure you have met the following requirements:
 
 - **Node.js**: Download and install Node.js from [nodejs.org](https://nodejs.org/en).
 - **MongoDB**: Make sure you have MongoDB installed and running. You can download it from [mongodb.com](https://www.mongodb.com/try/download/community).
+
+## ⚙️ Installation
+
+- **Clone the repository**:
+  ```
+  git clone https://github.com/your-username/find-your-lost-pet.git
+  ```
