@@ -57,7 +57,7 @@ Before you begin, ensure you have met the following requirements:
 
 Base URL: **/api/v1**
 
-User Routes
+User Routes **/auth** & **/users**
   - POST /signupUser - Register a new user.
   - POST /loginUser - Log in an existing user.
   - GET /isLoggedIn - Check if the user is logged in.
@@ -71,16 +71,16 @@ User Routes
   - GET / - Get all users.
   - GET /:id - Get user by ID.
         
-Post Routes
+Post Routes **/posts**
   - GET /posts: Retrieve all posts.
   - POST /posts: Create a new post.
   - DELETE /posts/:postId: Delete a post by ID.
 
-Message Routes
+Message Routes **/messages**
   - POST /messages/:receiverId/:chatId: Send a message.
   - GET /messages/:chatId: Retrieve messages in a chat.
 
-Chat Routes
+Chat Routes **/chats**
   - POST /:user1/:user2 - Create a chat between two users.
   - GET / - Retrieve all chats.
 
