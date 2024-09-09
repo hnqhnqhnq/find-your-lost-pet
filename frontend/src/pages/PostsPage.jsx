@@ -175,7 +175,6 @@ const PostsPage = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-100 to-teal-100 flex flex-col'>
       <Navbar />
@@ -250,7 +249,7 @@ const PostsPage = () => {
 
                 {commentsVisible[post._id] && (
                   <div
-                    ref={(el) => (commentRefs.current[post._id] = el)} // Attach the ref to the comments div
+                    ref={(el) => (commentRefs.current[post._id] = el)}
                     className='mt-4 p-4 bg-gray-100 rounded-lg'
                   >
                     {post.comments && post.comments.length > 0 ? (

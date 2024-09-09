@@ -14,6 +14,7 @@ const chatRouter = require("./routes/chatRoutes");
 const messageRouter = require("./routes/messageRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
+const checkOrigin = require("./utils/checkOrigin");
 
 // Initialize express app
 const app = express();
@@ -22,13 +23,16 @@ const app = express();
 app.use("/uploads", express.static(path.join(__dirname, "data/uploads")));
 
 // CORS configuration
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+// Helmet
+app.use(helmet());
 
 // Cookie Parser
 app.use(cookieParser());
@@ -59,6 +63,8 @@ app.use(xss());
 //app.use(hpp({}))
 
 // Routes
+app.use(checkOrigin);
+
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/chats", chatRouter);
