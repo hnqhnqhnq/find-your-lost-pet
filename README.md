@@ -11,4 +11,9 @@ Welcome to the Find Your Lost Pet project! This platform helps users post and se
 - [Usage](#usage)
 - [License](#license)
 
-## Prerequisites
+## 🔧 Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- **Node.js**: Download and install Node.js from [nodejs.org](https://nodejs.org/en).
+- **MongoDB**: Make sure you have MongoDB installed and running. You can download it from [mongodb.com](https://www.mongodb.com/try/download/community).
