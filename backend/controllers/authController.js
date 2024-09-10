@@ -163,7 +163,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   //   "host"
   // )}/api/v1/users/resetPassword/${resetToken}`;
 
-  const resetURL = `https://find-your-lost-pet.vercel.app/resetPassword/${resetToken}`;
+  const resetURL = `http://localhost:3000/resetPassword/${resetToken}`;
 
   const message = `
   <p>Forgot your password? Click the link below to reset it:</p>
